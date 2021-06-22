@@ -4,16 +4,16 @@ import mips.Utils.Input;
 import mips.Utils.Output;
 
 public class ALU implements mips.Utils.Observer {
-    Input input1;
-    Input input2;
-    Input Opcode;
-    Output output;
-    Output SREGoutput;
+    public Input input1;
+    public Input input2;
+    public Input ALUop;
+    public Output output;
+    public Output SREGoutput;
 
     public ALU() {
         input1 = new Input(this, 8);
         input2 = new Input(this, 8);
-        Opcode = new Input(this, 3);
+        ALUop = new Input(this, 3);
         output = new Output(8);
         SREGoutput = new Output(8);
     }
@@ -35,7 +35,7 @@ public class ALU implements mips.Utils.Observer {
         int nFlag = 0;
         int sFlag = 0;
         int zFlag = 0;
-        switch (Opcode.data) {
+        switch (ALUop.data) {
             // Add
             case 0:
                 res = data1 + data2;
@@ -67,8 +67,15 @@ public class ALU implements mips.Utils.Observer {
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
                 break;
-            // ANDI
             case 3:
+                res = data1;
+                zFlag = (res == 0) ? 1 : 0;
+                cFlag = 0;
+                nFlag = 128 & res;
+                nFlag = nFlag >> 7;
+                break;
+            // ANDI
+            case 4:
                 res = data1 & data2;
                 res = res & 255;
                 zFlag = (res == 0) ? 1 : 0;
@@ -76,16 +83,8 @@ public class ALU implements mips.Utils.Observer {
                 nFlag = nFlag >> 7;
                 break;
             // XOR
-            case 4:
-                res = data1 ^ data2;
-                res = res & 255;
-                zFlag = (res == 0) ? 1 : 0;
-                nFlag = 128 & res;
-                nFlag = nFlag >> 7;
-                break;
-            // SAR
             case 5:
-                res = data1 << data2;
+                res = data1 ^ data2;
                 res = res & 255;
                 zFlag = (res == 0) ? 1 : 0;
                 nFlag = 128 & res;
@@ -93,10 +92,26 @@ public class ALU implements mips.Utils.Observer {
                 break;
             // SAL
             case 6:
+                res = data1 << data2;
+                res = res & 255;
+
+                zFlag = (res == 0) ? 1 : 0;
+                nFlag = 128 & res;
+                nFlag = nFlag >> 7;
+                break;
+            // SAR
+            case 7:
                 res = data1 >> data2;
                 res = res & 255;
-                System.out.println(data1 + " " + data2);
-                System.out.println(res);
+               
+                zFlag = (res == 0) ? 1 : 0;
+                nFlag = 128 & res;
+                nFlag = nFlag >> 7;
+                break;
+            // MOV
+            case 8:
+                res = data2;
+                res = res & 255;
                 zFlag = (res == 0) ? 1 : 0;
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
@@ -114,20 +129,16 @@ public class ALU implements mips.Utils.Observer {
     }
 
     public static void main(String[] args) {
+        
         ALU alu = new ALU();
-        alu.input1.update(128);
-        alu.input2.update(7);
-        alu.Opcode.update(6);
-        String res = Integer.toBinaryString(alu.output.data);
-        while (res.length() < 8) {
-            res = "0" + res;
-        }
-        System.out.println(res);
-        String SREG = Integer.toBinaryString(alu.SREGoutput.data);
-        while (SREG.length() < 8) {
-            SREG = "0" + SREG;
-        }
-        System.out.println(SREG);
+        
+        //11101101
+        alu.input1.update(0b10110110);
+        alu.input2.update(2);
+        alu.ALUop.update(5);
+
+        System.out.println(Integer.toBinaryString(alu.output.data));
+       
     }
 
 }

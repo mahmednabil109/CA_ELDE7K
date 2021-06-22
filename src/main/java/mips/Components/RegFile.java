@@ -19,7 +19,7 @@ public class RegFile implements Observer{
     public Output outReg1;
     public Output outReg2;
 
-    int regs[];
+    public int regs[];
 
     public RegFile(){
         this.regs = new int[REGFILE_SIZE];
@@ -27,6 +27,7 @@ public class RegFile implements Observer{
         inReg1 = new Input(this, 16);
         inReg2 = new Input(this, 16);
         writeReg = new Input(this, 16);
+        writeData = new Input(this, 16);
         writeSignal = new Input(this, 1);
         clk = new Input(this, 1);
 
@@ -39,13 +40,19 @@ public class RegFile implements Observer{
         if(this.writeSignal.data == 1){
             this.regs[this.writeReg.data & ((1 << 6) - 1)] = this.writeData.data;
         }
-        this.outReg1.load(this.regs[this.inReg1.data & ((1 << 6) - 1)]);
-        this.outReg2.load(this.regs[this.inReg2.data & (((1 << 6) - 1) << 6)]);
+        int tempReg1 = this.regs[this.inReg1.data & ((1 << 6) - 1)];
+        int tempReg2 = this.regs[this.inReg2.data & (((1 << 6) - 1) << 6)];
+        if(outReg1.data != tempReg1)
+            this.outReg1.load(tempReg1);
+        if(outReg2.data != tempReg2)
+            this.outReg2.load(tempReg2);
+    
     }
 
     @Override
     public void update(int data) {
         // no need to do any thing here
+        ;
     }
 
 

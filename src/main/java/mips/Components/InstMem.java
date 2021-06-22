@@ -23,6 +23,11 @@ public class InstMem implements Observer{
 
     public Output outWord;
 
+    public Output opCode;
+    public Output R1;
+    public Output R2;
+
+
     public InstMem(){
         data = new int[MEMO_SIZE];
 
@@ -33,14 +38,22 @@ public class InstMem implements Observer{
         this.readSignal = new Input(this, 1);
 
         this.outWord = new Output(16);
+        this.opCode = new Output(16);
+        this.R1 = new Output(16);
+        this.R2 = new Output(16);
 
     }
 
     @Override
     public void update() {
         // main logic goes here
-        if(this.readSignal.data == 1)
-            this.outWord.load(this.data[this.addr.data]);
+        // if(this.readSignal.data == 1)
+
+        this.outWord.load(this.data[this.addr.data]);
+        this.opCode.load((this.data[this.addr.data] >> 12) & ((1 << 4) - 1));
+        this.R1.load((this.data[this.addr.data] >> 6) & ((1 << 6) - 1));
+        this.R2.load((this.data[this.addr.data]) & ((1 << 6) - 1));
+
         if(this.writeSignal.data == 1)
             this.data[this.addr.data] = this.inWord.data;
     }

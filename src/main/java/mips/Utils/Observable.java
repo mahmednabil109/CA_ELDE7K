@@ -11,13 +11,16 @@ public class Observable {
         this.observers = new Vector<>();
     }
 
-    public void connect(Observer obs){
+    public void connect(Observer obs) throws Exception{
+        if(obs == null) throw new Exception();
         this.observers.add(obs);
     }
 
     public void update(){
-        for(Observer obs : this.observers)
-            obs.update(this.data);
+        for(Observer obs : this.observers){
+            if(obs == null) {System.out.println("NULL ??");}
+            else obs.update(this.data);
+        }
     }
     
 }

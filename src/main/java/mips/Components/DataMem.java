@@ -4,7 +4,7 @@ import mips.Utils.Input;
 import mips.Utils.Observer;
 import mips.Utils.Output;
 
-public class dataMem implements Observer {
+public class DataMem implements Observer {
 
     public static final int wordSize = 8;
     public static final int memorySize = 2048;
@@ -23,9 +23,10 @@ public class dataMem implements Observer {
     // outword which will be loaded frome memory address
     public Output outWord;
 
-    public dataMem() {
+    public DataMem() {
         data = new int[memorySize];
         this.inWord = new Input(this, 6);
+        this.outWord = new Output(16);
         this.clk = new Input(this, 1);
         this.addr = new Input(this, 6);
         this.loadSignal = new Input(this, 1);
@@ -34,9 +35,7 @@ public class dataMem implements Observer {
 
     @Override
     public void update() {
-        if (this.loadSignal.data == 1) {
-            this.outWord.load(this.data[this.addr.data]);
-        }
+        // store the word to the signal
         if (this.storeSignal.data == 1) {
             this.data[this.addr.data] = this.inWord.data;
         }
@@ -45,7 +44,10 @@ public class dataMem implements Observer {
 
     @Override
     public void update(int data) {
-
+        // read from the memory 
+        // if (this.loadSignal.data == 1) {
+        this.outWord.load(this.data[this.addr.data]);
+        // }
     }
 
 }
