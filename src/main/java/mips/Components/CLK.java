@@ -1,6 +1,5 @@
 package mips.Components;
 
-import java.util.Observable;
 import java.util.Vector;
 
 import mips.Utils.Input;

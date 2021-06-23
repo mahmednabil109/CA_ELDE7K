@@ -48,8 +48,9 @@ public class CPU implements Observer {
     @Override
     public void update() {
         // clk
-        System.out.println("clk: " + this.clks);
-        if((++clks) % 3 == 0){
+        // System.out.println("clk: " + this.clks);
+        // (++clks) % 3 == 0 --> this is valid but for the non piplined arch
+        if(++clks >= 3){
             System.out.println("hey i am the helw");
             this.regWrite.load(this.tempRegWrite);
             this.memWrite.load(this.tempMemWrite);
