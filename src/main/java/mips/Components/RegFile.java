@@ -47,7 +47,7 @@ public class RegFile implements Observer{
     public void update(int data) {
         // this is to save some clks for the pipline
         int tempReg1 = this.regs[this.inReg1.data & ((1 << 6) - 1)];
-        int tempReg2 = this.regs[this.inReg2.data & (((1 << 6) - 1))];
+        int tempReg2 = this.regs[this.inReg2.data & ((1 << 6) - 1)];
         if(outReg1.data != tempReg1)
             this.outReg1.load(tempReg1);
         if(outReg2.data != tempReg2)

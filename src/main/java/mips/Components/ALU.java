@@ -13,7 +13,7 @@ public class ALU implements mips.Utils.Observer {
     public ALU() {
         input1 = new Input(this, 8);
         input2 = new Input(this, 8);
-        ALUop = new Input(this, 3);
+        ALUop = new Input(this, 4);
         output = new Output(8);
         SREGoutput = new Output(8);
     }
@@ -67,9 +67,13 @@ public class ALU implements mips.Utils.Observer {
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
                 break;
+            // BEQZ
             case 3:
-                res = data1;
-                zFlag = (res == 0) ? 1 : 0;
+                // r2 "imm"
+                System.out.println("data : " + data2 + " " + data1);
+                res = data2 + 1;
+                // change the zFlag to operate on the R1 but ouput R2 "imm"
+                zFlag = (data1 == 0) ? 1 : 0;
                 cFlag = 0;
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
@@ -103,7 +107,6 @@ public class ALU implements mips.Utils.Observer {
             case 7:
                 res = data1 >> data2;
                 res = res & 255;
-               
                 zFlag = (res == 0) ? 1 : 0;
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
@@ -116,6 +119,13 @@ public class ALU implements mips.Utils.Observer {
                 nFlag = 128 & res;
                 nFlag = nFlag >> 7;
                 break;
+            // BR
+            case 9:
+                res = (data1 << 6) | data2;
+                res = res & 255;
+                zFlag = (res == 0) ? 1 : 0;
+                nFlag = 128 & res;
+                nFlag = nFlag >> 7;
             default:
                 break;
         }
@@ -126,19 +136,6 @@ public class ALU implements mips.Utils.Observer {
         SREG = cFlag << 4 | vFlag << 3 | nFlag << 2 | sFlag << 1 | zFlag;
         output.load(res);
         SREGoutput.load(SREG);
-    }
-
-    public static void main(String[] args) {
-        
-        ALU alu = new ALU();
-        
-        //11101101
-        alu.input1.update(0b10110110);
-        alu.input2.update(2);
-        alu.ALUop.update(5);
-
-        System.out.println(Integer.toBinaryString(alu.output.data));
-       
     }
 
 }

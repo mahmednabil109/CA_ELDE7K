@@ -43,7 +43,7 @@ public class IDReg implements Observer{
 
     @Override
     public void update() {
-        this.pc.load(this.pcInput.data);
+        this.pc.load(this.pcInput.data - 2);
         this.op.load(this.opInput.data);
         this.R1.load(this.R1Input.data);
         this.R2.load(this.R2Input.data);

@@ -3,6 +3,7 @@ package mips.Components;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -23,12 +24,17 @@ public class Parser {
             int lineNum = 0;
             // reads the file line by line
             while ((line = br.readLine()) != null) {
+
                 line.trim();
                 line.toUpperCase();
-                String[] splittedLine = line.split(" ");
+
+                String[] splittedLine = line.replaceAll("\\s(\\s)+", "").split(" ");
+                System.out.println(Arrays.toString(splittedLine));
+                for(int i=0; i<splittedLine.length; i++)
+                    splittedLine[i] = splittedLine[i].trim();
                 String label;
                 // here we have label
-                if ((label = find(splittedLine[0], splittedLine[1])) != null) {
+                if (splittedLine.length >= 2 && (label = find(splittedLine[0], splittedLine[1])) != null) {
                     labels.put(label, lineNum);
                     String[] splittedInstruction = line.split(":");
                     // checking if we have something in the line with the label
@@ -42,20 +48,28 @@ public class Parser {
                     System.out.println(line);
                     this.instructions.add(splittedLine);
                 }
-
+                lineNum++;
             }
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        for(int i=0; i<this.instructions.size(); i++){
+            String[] inst = instructions.get(i);
+            if(inst.length < 2) continue;
+            if(inst[2].charAt(0) != 'r' && inst[2].charAt(0) != '-' && (inst[2].charAt(0) > '9' || inst[2].charAt(0) < '0')){
+                System.out.println(labels + " " + inst[2] + " " + labels.get(inst[2]));
+                inst[2] = "" + (labels.get(inst[2]) - i - 1);
+            }
+        }
         return convertStringtoBin();
 
-    }
+    }{}
 
     // takes the instructions
     private Vector<Integer> convertStringtoBin() {
-
         for (String[] inst : this.instructions) {
+            if(inst.length < 2) continue;
             int Instruction = 0;
             int opcode = 0;
 
@@ -63,43 +77,43 @@ public class Parser {
 
             switch (inst[0].toUpperCase()) {
                 case "ADD":
-                    opcode += 0;
+                    opcode = 0;
                     break;
                 case "SUB":
-                    opcode += 1;
+                    opcode = 1;
                     break;
                 case "MUL":
-                    opcode += 2;
+                    opcode = 2;
                     break;
                 case "MOVI":
-                    opcode += 3;
+                    opcode = 3;
                     break;
                 case "BEQZ":
-                    opcode += 4;
+                    opcode = 4;
                     break;
                 case "ANDI":
-                    opcode += 5;
+                    opcode = 5;
                     break;
                 case "EOR":
-                    opcode += 6;
+                    opcode = 6;
                     break;
                 case "BR":
-                    opcode += 7;
+                    opcode = 7;
                     break;
                 case "SAL":
-                    opcode += 8;
+                    opcode = 8;
                     break;
                 case "SAR":
-                    opcode += 9;
+                    opcode = 9;
                     break;
                 case "LDR":
-                    opcode += 10;
+                    opcode = 10;
                     break;
                 case "STR":
-                    opcode += 11;
+                    opcode = 11;
                     break;
                 default:
-                    opcode += 15;
+                    opcode = 15;
                     break;
             }
             // gets R1 code
@@ -112,7 +126,7 @@ public class Parser {
             int regNum2 = Integer.parseInt(inst[2]);
 
             // calculates the instruction as 16 bits bin num
-            Instruction = (opcode << 12) | (regNum1 << 6) | regNum2;
+            Instruction = (opcode << 12) | (regNum1 << 6) | (regNum2 & ((1 << 6) - 1));
             binInstructions.add(Instruction);
         }
         // For Testing
@@ -136,8 +150,8 @@ public class Parser {
         return null;
     }
 
-    public static void main(String[] args) {
-        Parser p = new Parser();
-        p.Parse("C://Users/Ismailia Laptop/eclipse-workspace/pipeline/src/test.txt");
-    }
+    // public static void main(String[] args) {
+    //     Parser p = new Parser();
+    //     p.Parse("C://Users/Ismailia Laptop/eclipse-workspace/pipeline/src/test.txt");
+    // }
 }

@@ -14,12 +14,15 @@ public class Observable {
     public void connect(Observer obs) throws Exception{
         if(obs == null) throw new Exception();
         this.observers.add(obs);
+        this.update();
     }
 
     public void update(){
         for(Observer obs : this.observers){
             if(obs == null) {System.out.println("NULL ??");}
-            else obs.update(this.data);
+            else{
+                obs.update(this.data);
+            }
         }
     }
     

@@ -6,7 +6,7 @@ import mips.Utils.Input;
 
 public class CLK {
 
-    Vector<Input> subs;
+    public Vector<Input> subs;
 
     public CLK(){
         this.subs = new Vector<>();

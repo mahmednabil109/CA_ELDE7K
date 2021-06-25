@@ -17,12 +17,14 @@ public class Input implements Observer {
 
     @Override
     public void update() {
-        this.cnxt.update();
+        if(this.cnxt != null)
+            this.cnxt.update();
     }
 
     @Override
     public void update(int data) {
         this.data = data & ((1 << this.width) - 1);
-        this.cnxt.update(this.data);        
+        if(this.cnxt != null)
+            this.cnxt.update(this.data);        
     }
 }

@@ -8,14 +8,21 @@ public class CPU implements Observer {
 
     public Input op;
     public Input pc;
+    public Input statusReg;
 
-    // ?not for piplining
+    // ?note for piplining
     public Input clk;
 
     public Output ALUop;
     // write signals
     public Output regWrite;
     public Output memWrite;
+
+    // pc write
+    public Output PCsrc;
+    public Output INCsrc;
+    public Output adderSrc;
+
 
     // to the two muxes
     // 0 -> alu , 1 -> mem
@@ -26,6 +33,8 @@ public class CPU implements Observer {
     public int lastAddr;
 
     int clks = 0;
+    // number of instruction to cancel
+    int cancel = 0;
     int tempMemWrite, tempRegWrite;
 
     public CPU(int lastAddr) {
@@ -34,9 +43,17 @@ public class CPU implements Observer {
         this.op = new Input(this, 4);
         this.pc = new Input(this, 16);
 
+        // TODO for testing
+        this.statusReg = new Input(this, 8);
+
         this.ALUop = new Output(4);
         this.regWrite = new Output(1);
         this.memWrite = new Output(1);
+
+        this.PCsrc = new Output(1);
+        this.INCsrc = new Output(1);
+        this.adderSrc = new Output(1);
+
 
         this.memToReg = new Output(1);
         this.ALUsrc = new Output(1);
@@ -48,8 +65,11 @@ public class CPU implements Observer {
     @Override
     public void update() {
         // clk
-        // System.out.println("clk: " + this.clks);
+        System.out.println("clk: " + this.clks + " " +  this.ALUop.data);
         // (++clks) % 3 == 0 --> this is valid but for the non piplined arch
+        // decrease the cancel flag each clk
+        if(this.cancel > 0) this.cancel --;
+
         if(++clks >= 3){
             System.out.println("hey i am the helw");
             this.regWrite.load(this.tempRegWrite);
@@ -61,9 +81,19 @@ public class CPU implements Observer {
     public void update(int data) {
         this.regWrite.load(0);
         this.memWrite.load(0);
+        
+        // for the pc to handle the branching
+        this.PCsrc.load(0);
+        this.INCsrc.load(0);
+        this.adderSrc.load(0);
+
+
 
         this.tempRegWrite = 0;
         this.tempMemWrite = 0;
+
+        // don't do any change
+        if(this.cancel > 0) return;
 
         if (this.pc.data == lastAddr) {
             // TODO cancel any next instructions
@@ -97,6 +127,7 @@ public class CPU implements Observer {
             // MOV
             case 3:
                 this.ALUsrc.load(1);
+                // 
                 this.ALUop.load(8);
                 this.memToReg.load(0);
                 // this.regWrite.load(1);
@@ -104,8 +135,20 @@ public class CPU implements Observer {
                 break;
             // BEQZ
             case 4:
-                // TODO handle branch
+                this.ALUsrc.load(1);
                 this.ALUop.load(3);
+                // check for zero flag
+                System.out.println("in cpu status: " + this.statusReg.data);
+                if((this.statusReg.data & 1) == 1){
+                    this.adderSrc.load(1);
+                    this.cancel = 3;
+                    this.PCsrc.load(0);
+                    this.INCsrc.load(1);
+                }else{
+                    this.adderSrc.load(0);
+                    this.PCsrc.load(0);
+                    this.INCsrc.load(0);
+                }
                 break;
             // ANDI
             case 5:
@@ -125,8 +168,12 @@ public class CPU implements Observer {
                 break;
             // BR
             case 7:
-                // TODO handle
-                this.ALUop.load(3);
+                this.PCsrc.load(1);
+                // this is don't care
+                this.INCsrc.load(0);
+                this.ALUsrc.load(0);
+                this.ALUop.load(9);
+                this.cancel = 3;
                 break;
             // SAL
             case 8:

@@ -32,7 +32,6 @@ public class Reg implements Observer{
 
     @Override
     public void update() {
-        if(this.inc) this.inData.data ++;
         this.outData.load(this.inData.data & ((1 << this.width) - 1));
     }
 
