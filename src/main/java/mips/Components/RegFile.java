@@ -38,6 +38,11 @@ public class RegFile implements Observer{
     @Override
     public void update() {
         if(this.writeSignal.data == 1){
+            
+            System.out.printf("[REG UPDATE] R%d is updated with %d\n", 
+                this.writeReg.data & ((1 << 6) - 1), 
+                this.writeData.data
+            );
             this.regs[this.writeReg.data & ((1 << 6) - 1)] = this.writeData.data;
         }
         

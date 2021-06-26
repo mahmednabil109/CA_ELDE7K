@@ -37,6 +37,10 @@ public class DataMem implements Observer {
     public void update() {
         // store the word to the signal
         if (this.storeSignal.data == 1) {
+            System.out.printf("[MEMORY UPDATE] memory addres @%d is upadated with %d\n", 
+                this.addr.data,
+                this.inWord.data
+            );
             this.data[this.addr.data] = this.inWord.data;
         }
 

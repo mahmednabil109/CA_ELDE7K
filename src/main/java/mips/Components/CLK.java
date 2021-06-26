@@ -20,9 +20,5 @@ public class CLK {
         for(Input in : this.subs)
             in.tick();
     }
-
-    public void helw(){
-        this.tick();
-    }
     
 }

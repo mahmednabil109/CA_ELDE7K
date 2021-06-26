@@ -29,7 +29,7 @@ public class Parser {
                 line.toUpperCase();
 
                 String[] splittedLine = line.replaceAll("\\s(\\s)+", "").split(" ");
-                System.out.println(Arrays.toString(splittedLine));
+                // System.out.println(Arrays.toString(splittedLine));
                 for(int i=0; i<splittedLine.length; i++)
                     splittedLine[i] = splittedLine[i].trim();
                 String label;
@@ -45,7 +45,7 @@ public class Parser {
                 }
                 // here we don't have label
                 else {
-                    System.out.println(line);
+                    // System.out.println(line);
                     this.instructions.add(splittedLine);
                 }
                 lineNum++;
@@ -58,7 +58,7 @@ public class Parser {
             String[] inst = instructions.get(i);
             if(inst.length < 2) continue;
             if(inst[2].charAt(0) != 'r' && inst[2].charAt(0) != '-' && (inst[2].charAt(0) > '9' || inst[2].charAt(0) < '0')){
-                System.out.println(labels + " " + inst[2] + " " + labels.get(inst[2]));
+                // System.out.println(labels + " " + inst[2] + " " + labels.get(inst[2]));
                 inst[2] = "" + (labels.get(inst[2]) - i - 1);
             }
         }
@@ -129,10 +129,7 @@ public class Parser {
             Instruction = (opcode << 12) | (regNum1 << 6) | (regNum2 & ((1 << 6) - 1));
             binInstructions.add(Instruction);
         }
-        // For Testing
 
-        // System.out.println(binInstructions);
-        // System.out.println(Integer.toBinaryString(binInstructions.get(1)));
         return binInstructions;
     }
 

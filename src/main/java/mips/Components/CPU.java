@@ -65,13 +65,12 @@ public class CPU implements Observer {
     @Override
     public void update() {
         // clk
-        System.out.println("clk: " + this.clks + " " +  this.ALUop.data);
+        System.out.println("clk: " + this.clks);
         // (++clks) % 3 == 0 --> this is valid but for the non piplined arch
         // decrease the cancel flag each clk
         if(this.cancel > 0) this.cancel --;
 
         if(++clks >= 3){
-            System.out.println("hey i am the helw");
             this.regWrite.load(this.tempRegWrite);
             this.memWrite.load(this.tempMemWrite);
         }
@@ -138,7 +137,6 @@ public class CPU implements Observer {
                 this.ALUsrc.load(1);
                 this.ALUop.load(3);
                 // check for zero flag
-                System.out.println("in cpu status: " + this.statusReg.data);
                 if((this.statusReg.data & 1) == 1){
                     this.adderSrc.load(1);
                     this.cancel = 3;

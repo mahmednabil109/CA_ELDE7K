@@ -70,7 +70,6 @@ public class ALU implements mips.Utils.Observer {
             // BEQZ
             case 3:
                 // r2 "imm"
-                System.out.println("data : " + data2 + " " + data1);
                 res = data2 + 1;
                 // change the zFlag to operate on the R1 but ouput R2 "imm"
                 zFlag = (data1 == 0) ? 1 : 0;
