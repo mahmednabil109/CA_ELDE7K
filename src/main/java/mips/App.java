@@ -115,19 +115,50 @@ public class App {
         queue.add("NOP");
 
         while(PC.outData.data <= (instructions.size() + 2)){
+
             clk.tick();
 
             /**
              * this code is for printing the status of the mips
             */
-            System.out.println(buffer.outData.data);
             queue.remove(0);
             if(buffer.outData.data <= instructions.size())
                 queue.add(Integer.toBinaryString(instructions.get(buffer.outData.data - 1)));
             else
                 queue.add("NOP");
+
+            System.out.println("[======================]");
             System.out.printf("%16s %16s %16s\n", "IF", "ID", "EX");
             System.out.printf("%16s %16s %16s\n", queue.get(2), queue.get(1), queue.get(0));
+            System.out.println("");
+            
+
+            //! [NOTE] the data being printed is in BIN
+            System.out.println("[IF INPUTS]");
+            System.out.printf("INSTRUCTION : %s\n", Integer.toBinaryString(instMem.outWord.data));
+            System.out.println("");
+
+            System.out.println("[ID INPUTS]");
+            System.out.printf("PC : %s\n", Integer.toBinaryString(iDReg.pcInput.data));
+            System.out.printf("OP : %s\n", Integer.toBinaryString(iDReg.opInput.data));
+            System.out.printf("@R1 <write back address of the register> : %s\n", Integer.toBinaryString(iDReg.R1Input.data));
+            System.out.printf("imm : %s\n", Integer.toBinaryString(iDReg.R2Input.data));
+            System.out.printf("*R1 : %s\n", Integer.toBinaryString(iDReg.outReg1Input.data));
+            System.out.printf("*R2 : %s\n", Integer.toBinaryString(iDReg.outReg2Input.data));
+            System.out.println("");
+
+            System.out.println("[IF INPUTS]");
+            System.out.printf("PC : %s\n", Integer.toBinaryString(iDReg.pcInput.data));
+            System.out.printf("@R1 <write back address of the register> : %s\n", Integer.toBinaryString(iDReg.R1Input.data));
+            System.out.printf("ALU result : %s\n", Integer.toBinaryString(alu.output.data));
+            System.out.printf("DATA Memory output : %s\n", Integer.toBinaryString(dataMem.outWord.data));
+            System.out.println("");
+
+
+            System.out.println("[======================]");
+            /**
+             *  end of printings
+            */
 
         }
         System.out.println("[INSTRUCTION MEMORY CONTENT]");
